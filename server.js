@@ -23,9 +23,16 @@ io.on('connection', socket => {
 
   socket.on('join', user => {
     console.log("Oh, I've got a new user logged in - " + user);
+
     const newUser = { name: user, id: socket.id };
     users.push(newUser);
-    console.log('users:', users);
+
+    const message = {
+      author: 'Chat Bot',
+      content: `<i><b>${user}</b> has joined the conversation!</i>`
+    };
+    messages.push(message);
+    socket.broadcast.emit('message', message);
   });
 
   socket.on('message', message => {
@@ -36,13 +43,24 @@ io.on('connection', socket => {
 
   socket.on('disconnect', () => {
     console.log('Oh, socket ' + socket.id + ' has left');
+
+    let deletedUser = '';
+
     const deleteUser = (user, allUsers) => {
       if (user.id === socket.id) {
         users.splice(allUsers, 1);
+
+        deletedUser = user.name;
       }
     };
     users.some(deleteUser);
-    console.log('users:', users);
+
+    const message = {
+      author: 'Chat Bot',
+      content: `<i><b>${deletedUser}</b> has left the conversation!</i>`
+    };
+    messages.push(message);
+    socket.broadcast.emit('message', message);
   });
 
   console.log("I've added a listener on message event \n");
