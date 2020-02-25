@@ -46,14 +46,14 @@ io.on('connection', socket => {
 
     let deletedUser = '';
 
-    const deleteUser = (user, allUsers) => {
-      if (user.id === socket.id) {
-        users.splice(allUsers, 1);
+    for (let removedUser of users) {
+      if (removedUser.id === socket.id) {
+        const index = users.indexOf(removedUser);
+        users.splice(removedUser.id, index);
 
-        deletedUser = user.name;
+        deletedUser = removedUser.name;
       }
-    };
-    users.some(deleteUser);
+    }
 
     const message = {
       author: 'Chat Bot',
