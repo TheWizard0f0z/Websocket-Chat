@@ -44,20 +44,15 @@ io.on('connection', socket => {
   socket.on('disconnect', () => {
     console.log('Oh, socket ' + socket.id + ' has left');
 
-    let deletedUser = '';
+    removeUser = () => {
+      users.filter(user => user.id !== socket.id);
+    };
 
-    for (let removedUser of users) {
-      if (removedUser.id === socket.id) {
-        const index = users.indexOf(removedUser);
-        users.splice(removedUser.id, index);
-
-        deletedUser = removedUser.name;
-      }
-    }
+    const deletedUser = users.find(user => user.id === socket.id);
 
     const message = {
       author: 'Chat Bot',
-      content: `<i><b>${deletedUser}</b> has left the conversation!</i>`
+      content: `<i><b>${deletedUser.name}</b> has left the conversation!</i>`
     };
     messages.push(message);
     socket.broadcast.emit('message', message);
