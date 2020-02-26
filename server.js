@@ -27,12 +27,7 @@ io.on('connection', socket => {
     const newUser = { name: user, id: socket.id };
     users.push(newUser);
 
-    const message = {
-      author: 'Chat Bot',
-      content: `<i><b>${user}</b> has joined the conversation!</i>`
-    };
-    messages.push(message);
-    socket.broadcast.emit('message', message);
+    socket.broadcast.emit('join', newUser.name);
   });
 
   socket.on('message', message => {
@@ -48,14 +43,9 @@ io.on('connection', socket => {
       users.filter(user => user.id !== socket.id);
     };
 
-    const deletedUser = users.find(user => user.id === socket.id);
+    const leavingUser = users.find(user => user.id === socket.id);
 
-    const message = {
-      author: 'Chat Bot',
-      content: `<i><b>${deletedUser.name}</b> has left the conversation!</i>`
-    };
-    messages.push(message);
-    socket.broadcast.emit('message', message);
+    socket.broadcast.emit('leave', leavingUser.name);
   });
 
   console.log("I've added a listener on message event \n");
